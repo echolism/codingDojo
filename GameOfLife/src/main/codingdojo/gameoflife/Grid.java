@@ -2,6 +2,7 @@ package codingdojo.gameoflife;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class Grid {
     private Map<Integer, Map<Integer, Cell>> grid;
@@ -17,10 +18,10 @@ public class Grid {
 
     private void initializeGrid(int width, int height) {
         this.grid = new HashMap<>();
-        for (int i = 1; i <= width; i++) {
-            grid.put(i, new HashMap<>());
-            for (int j = 1; j <= height; j++) {
-                grid.get(i).put(j, null);
+        for (int x = 1; x <= width; x++) {
+            grid.put(x, new HashMap<>());
+            for (int y = 1; y <= height; y++) {
+                grid.get(x).put(y, null);
             }
         }
     }
@@ -42,5 +43,25 @@ public class Grid {
 
     private void killCell(Cell cell) {
         cell.setLive(false);
+    }
+
+    public String getGridMap() {
+        final StringBuilder result = new StringBuilder();
+        IntStream.rangeClosed(1, height).forEach(y -> {
+            IntStream.rangeClosed(1, width).forEach(x ->
+                    result.append(getGridStatus(x, y))
+            );
+            result.append("\n");
+        });
+        return result.toString().substring(0, result.length() - 1);
+    }
+
+    private String getGridStatus(int x, int y) {
+        final Cell cell = getCell(x, y);
+        return cell == null ? "-" : cell.isLive() ? "O" : "X";
+    }
+
+    private Cell getCell(int x, int y) {
+        return grid.get(x).get(y);
     }
 }
